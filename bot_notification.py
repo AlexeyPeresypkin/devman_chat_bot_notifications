@@ -21,10 +21,10 @@ def send_message(chat_id, token, response):
 def main():
     load_dotenv()
     url = 'https://dvmn.org/api/long_polling/'
-    headers = {'Authorization': os.getenv('DEVMAN_TOKEN')}
+    headers = {'Authorization': os.environ['DEVMAN_TOKEN']}
     params = {}
-    telegram_token = os.getenv('TELEGRAM_TOKEN')
-    chat_id = os.getenv('CHAT_ID')
+    telegram_token = os.environ['TELEGRAM_TOKEN']
+    chat_id = os.environ['CHAT_ID']
     while True:
         try:
             response = requests.get(url, headers=headers, params=params)
