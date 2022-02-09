@@ -6,8 +6,8 @@ from dotenv import load_dotenv
 
 
 def send_message(chat_id, token, response):
-    lesson_title = response.json()['new_attempts']['lesson_title']
-    is_negative = response.json()['new_attempts']['is_negative']
+    lesson_title = response.json()['new_attempts'][0]['lesson_title']
+    is_negative = response.json()['new_attempts'][0]['is_negative']
     if is_negative:
         message = f'У вас проверили работу "{lesson_title}"\n' \
                   f'К сожалению, в работе нашлись ошибки'
@@ -34,7 +34,7 @@ def main():
                 )
             elif response.json()['status'] == 'found':
                 params['timestamp_to_request'] = int(
-                    response.json()['new_attempts']['timestamp']
+                    response.json()['new_attempts'][0]['timestamp']
                 )
                 send_message(chat_id, telegram_token, response)
         except requests.exceptions.ReadTimeout:
