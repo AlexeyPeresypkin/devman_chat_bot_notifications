@@ -6,7 +6,6 @@ import logging
 from dotenv import load_dotenv
 
 
-
 def send_message(chat_id, token, response):
     lesson_title = response.json()['new_attempts'][0]['lesson_title']
     is_negative = response.json()['new_attempts'][0]['is_negative']
@@ -20,8 +19,13 @@ def send_message(chat_id, token, response):
     bot.send_message(chat_id=chat_id, text=message)
 
 
+def send_log_info(chat_id, token, text):
+    bot = telegram.Bot(token=token)
+    bot.send_message(chat_id=chat_id, text=text)
+
+
 def main():
-    logging.warning('Приложение стартовало')
+    logger.info('Приложение стартовало')
     load_dotenv()
     url = 'https://dvmn.org/api/long_polling/'
     headers = {'Authorization': os.environ['DEVMAN_TOKEN']}
@@ -46,26 +50,32 @@ def main():
         except requests.exceptions.ConnectionError:
             print('Connection error')
             time.sleep(30)
+        except Exception:
+            logger.critical('Bot stopped with error')
 
+
+class BotLogsHandler(logging.Handler):
+    def __init__(self, telegram_token, chat_id):
+        super().__init__()
+        self.chat_id = chat_id
+        self.telegram_token = telegram_token
+
+    def emit(self, record):
+        log_entry = self.format(record)
+        send_log_info(
+            chat_id=self.chat_id,
+            token=self.telegram_token,
+            text=log_entry
+        )
+
+
+logging.basicConfig(format="%(asctime)s %(process)d %(levelname)s %(message)s")
+logger = logging.getLogger('TelegramLoger')
+logger.setLevel(logging.DEBUG)
+handler = BotLogsHandler(os.environ['TELEGRAM_TOKEN'], os.environ['CHAT_ID'])
+logger.addHandler(handler)
 
 if __name__ == '__main__':
     main()
 
-# d = {
-#     "request_query": [],
-#     "status": "timeout",
-#     "timestamp_to_request": 1644339121.1714048
-# }
-#
-# d2 = {
-#     "status": "found",
-#     "new_attempts": [
-#         {
-#             "submitted_at": "2019-03-28...",
-#             "is_negative": False,
-#             "lesson_title": "Готовим речь",
-#             "timestamp": 1455609162.580245
-#         }
-#     ],
-#     "last_attempt_timestamp": 1455609162.580245
-# }
+
