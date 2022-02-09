@@ -2,7 +2,9 @@ import os
 import telegram
 import requests
 import time
+import logging
 from dotenv import load_dotenv
+
 
 
 def send_message(chat_id, token, response):
@@ -19,6 +21,7 @@ def send_message(chat_id, token, response):
 
 
 def main():
+    logging.warning('Приложение стартовало')
     load_dotenv()
     url = 'https://dvmn.org/api/long_polling/'
     headers = {'Authorization': os.environ['DEVMAN_TOKEN']}
@@ -48,21 +51,21 @@ def main():
 if __name__ == '__main__':
     main()
 
-d = {
-    "request_query": [],
-    "status": "timeout",
-    "timestamp_to_request": 1644339121.1714048
-}
-
-d2 = {
-    "status": "found",
-    "new_attempts": [
-        {
-            "submitted_at": "2019-03-28...",
-            "is_negative": False,
-            "lesson_title": "Готовим речь",
-            "timestamp": 1455609162.580245
-        }
-    ],
-    "last_attempt_timestamp": 1455609162.580245
-}
+# d = {
+#     "request_query": [],
+#     "status": "timeout",
+#     "timestamp_to_request": 1644339121.1714048
+# }
+#
+# d2 = {
+#     "status": "found",
+#     "new_attempts": [
+#         {
+#             "submitted_at": "2019-03-28...",
+#             "is_negative": False,
+#             "lesson_title": "Готовим речь",
+#             "timestamp": 1455609162.580245
+#         }
+#     ],
+#     "last_attempt_timestamp": 1455609162.580245
+# }
